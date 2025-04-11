@@ -1,0 +1,43 @@
+{
+  "datasets" : [ {
+    "name" : "14cb0cab",
+    "displayName" : "Churn - Customer Breakdown - Universal",
+    "query" : "SELECT canal, country, count(*) as users_count \nFROM data_pioneers.c360.churn_features \nWHERE churn =1 and canal is not null \nGROUP BY canal, country"
+  }, {
+    "name" : "e6b75a3f",
+    "displayName" : "Churn - Total MRR - Universal",
+    "query" : "SELECT sum(amount)/10 as MRR , country FROM data_pioneers.c360.churn_orders o left join data_pioneers.c360.churn_users cu on o.user_id = cu.user_id WHERE (month(to_timestamp(o.creation_date, 'MM-dd-yyyy HH:mm:ss')) = (select max(month(to_timestamp(creation_date, 'MM-dd-yyyy HH:mm:ss'))) from data_pioneers.c360.churn_orders)) group by country;"
+  }, {
+    "name" : "9c99849a",
+    "displayName" : "Churn - Predictions - Universal",
+    "query" : "SELECT cast(days_since_creation/30 as int) as days_since_creation, churn, country, count(*) as customers FROM data_pioneers.c360.churn_features GROUP BY days_since_creation, churn, country having days_since_creation < 1000"
+  }, {
+    "name" : "8fe0aabb",
+    "displayName" : "Churn - Country Filter",
+    "query" : "select distinct country from data_pioneers.c360.churn_users;"
+  }, {
+    "name" : "301dc2c0",
+    "displayName" : "Churn - Monthly Revenue Risk - Universal",
+    "query" : "SELECT sum(amount)/100 as MRR_at_risk, country FROM data_pioneers.c360.churn_orders o left join data_pioneers.c360.churn_users cu on o.user_id = cu.user_id WHERE month(to_timestamp(o.creation_date, 'MM-dd-yyyy HH:mm:ss')) = (select max(month(to_timestamp(creation_date, 'MM-dd-yyyy HH:mm:ss'))) from data_pioneers.c360.churn_orders) and o.user_id in (SELECT user_id FROM data_pioneers.c360.churn_users WHERE churn=1) GROUP BY country;"
+  }, {
+    "name" : "674f8b7c",
+    "displayName" : "Churn - Subscriptions based on Internet Service",
+    "query" : "SELECT platform, churn, country, count(*) as event_count FROM data_pioneers.c360.churn_app_events INNER JOIN data_pioneers.c360.churn_users USING (user_id) WHERE platform IS NOT NULL GROUP BY platform, churn, country;"
+  }, {
+    "name" : "bc5f8d94",
+    "displayName" : "Churn - Predicted Churn Percent Payment Method - Universal",
+    "query" : "SELECT p.country, p.churn, count(*) as customers FROM data_pioneers.c360.churn_features p GROUP BY p.country, p.churn;"
+  }, {
+    "name" : "12ae97eb",
+    "displayName" : "Churn - At-Risk Customers - Universal",
+    "query" : "SELECT country, count(*)/12 as at_risk FROM data_pioneers.c360.churn_users WHERE churn=1 GROUP BY country;"
+  }, {
+    "name" : "9ca42b8a",
+    "displayName" : "Churn - Predicted to Churn - Universal",
+    "query" : "SELECT user_id, churn, country from data_pioneers.c360.churn_users where churn=1;"
+  } ],
+  "pages" : [ {
+    "name" : "f7ea418d",
+    "displayName" : "Untitled page"
+  } ]
+}
